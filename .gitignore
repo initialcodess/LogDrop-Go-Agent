@@ -1,0 +1,4 @@
+/build/
+*.test
+*.out
+go.work.sum

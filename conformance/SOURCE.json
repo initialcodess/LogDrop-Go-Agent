@@ -1,0 +1,9 @@
+{
+  "source": "LogDrop-Java-Agent/conformance/privacy",
+  "commit": "6b57ec4",
+  "files": {
+    "rules.json": "b91979c4db721e2482929b901e17459907de5dd4c0ab11fbdc76f2dfb03e08ee",
+    "span-sanitizer.json": "02961446f3226aa00d848c79728ad31b88d87780b856fc0ef8518d5286a56b9d",
+    "sql-normalizer.json": "b21cc70f029c4fc493b4846ca46fcb9110e4ebe2e857c250fbda1f8abc8fb17f"
+  }
+}

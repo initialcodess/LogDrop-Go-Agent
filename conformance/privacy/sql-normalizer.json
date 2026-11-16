@@ -1,0 +1,227 @@
+{
+  "description": "SqlStatementNormalizer.normalize(input, system) must return expected (null: nothing exported). Shared by every LogDrop tracing implementation; the Java core is the reference.",
+  "cases": [
+    {
+      "name": "number and string literals",
+      "system": "postgresql",
+      "input": "SELECT name FROM orders WHERE id = 42 AND secret <> 'sql-secret'",
+      "expected": "SELECT name FROM orders WHERE id = ? AND secret <> ?"
+    },
+    {
+      "name": "signed exponent and escaped quote",
+      "system": "postgresql",
+      "input": "UPDATE card_holder SET balance = -12.5e3, note = 'it''s mine' WHERE id = 7",
+      "expected": "UPDATE card_holder SET balance = ?, note = ? WHERE id = ?"
+    },
+    {
+      "name": "identifiers with digits, booleans and hex",
+      "system": "postgresql",
+      "input": "SELECT * FROM t1_0 JOIN v2_items ON t1_0.id = v2_items.order_id WHERE flag = TRUE AND data = 0xCAFE",
+      "expected": "SELECT * FROM t1_0 JOIN v2_items ON t1_0.id = v2_items.order_id WHERE flag = ? AND data = ?"
+    },
+    {
+      "name": "bind placeholders are kept",
+      "system": "postgresql",
+      "input": "SELECT * FROM a WHERE x = ? AND y = $1 AND z = :name AND w = @p1 AND v = ?2",
+      "expected": "SELECT * FROM a WHERE x = ? AND y = $1 AND z = :name AND w = @p1 AND v = ?2"
+    },
+    {
+      "name": "IN list of one",
+      "system": "postgresql",
+      "input": "SELECT * FROM users WHERE id IN (1)",
+      "expected": "SELECT * FROM users WHERE id IN (?)"
+    },
+    {
+      "name": "IN list of three",
+      "system": "postgresql",
+      "input": "SELECT * FROM users WHERE id IN (1, 2,3)",
+      "expected": "SELECT * FROM users WHERE id IN (?)"
+    },
+    {
+      "name": "multi-row VALUES and trailing semicolon",
+      "system": "postgresql",
+      "input": "INSERT INTO items (a, b) VALUES (1, 'x'), (2, 'y'),\n (3, 'z');",
+      "expected": "INSERT INTO items (a, b) VALUES (?, ?)"
+    },
+    {
+      "name": "block and line comments",
+      "system": "postgresql",
+      "input": "/* request 9f3c user=ahmet */ SELECT a\n\tFROM b -- trailing 'note'\n WHERE c = 'x'",
+      "expected": "SELECT a FROM b WHERE c = ?"
+    },
+    {
+      "name": "comment marker inside a string",
+      "system": "postgresql",
+      "input": "SELECT a FROM b WHERE c = 'it''s -- not a comment'",
+      "expected": "SELECT a FROM b WHERE c = ?"
+    },
+    {
+      "name": "dollar-quoted string",
+      "system": "postgresql",
+      "input": "SELECT a FROM b WHERE c = $tag$ secret value $tag$",
+      "expected": "SELECT a FROM b WHERE c = ?"
+    },
+    {
+      "name": "string cut off by a length limit",
+      "system": "postgresql",
+      "input": "SELECT * FROM t WHERE email = 'person@exam",
+      "expected": "SELECT * FROM t WHERE email = ?"
+    },
+    {
+      "name": "block comment cut off by a length limit",
+      "system": "postgresql",
+      "input": "SELECT * FROM t /* user ahmet",
+      "expected": "SELECT * FROM t"
+    },
+    {
+      "name": "double quotes are identifiers in PostgreSQL",
+      "system": "postgresql",
+      "input": "SELECT \"Id\" FROM \"Orders\" WHERE \"Name\" = 'x'",
+      "expected": "SELECT \"Id\" FROM \"Orders\" WHERE \"Name\" = ?"
+    },
+    {
+      "name": "double quotes are strings in MySQL",
+      "system": "mysql",
+      "input": "SELECT id FROM orders WHERE name = \"person@example.com\"",
+      "expected": "SELECT id FROM orders WHERE name = ?"
+    },
+    {
+      "name": "double quotes are strings in MariaDB, system name case-insensitive",
+      "system": " MariaDB ",
+      "input": "SELECT id FROM orders WHERE name = \"person@example.com\"",
+      "expected": "SELECT id FROM orders WHERE name = ?"
+    },
+    {
+      "name": "hash is an identifier in SQL Server",
+      "system": "mssql",
+      "input": "SELECT * FROM #orders WHERE id = 5",
+      "expected": "SELECT * FROM #orders WHERE id = ?"
+    },
+    {
+      "name": "hash starts a comment in MySQL",
+      "system": "mysql",
+      "input": "SELECT a FROM b # user ahmet\nWHERE c = 5",
+      "expected": "SELECT a FROM b WHERE c = ?"
+    },
+    {
+      "name": "subtraction keeps its operand, a negative literal is masked",
+      "system": "postgresql",
+      "input": "SELECT total-1 FROM t WHERE x = -1",
+      "expected": "SELECT total-? FROM t WHERE x = ?"
+    },
+    {
+      "name": "only separators",
+      "system": "postgresql",
+      "input": "   ;  ",
+      "expected": null
+    },
+    {
+      "name": "no statement",
+      "system": "postgresql",
+      "input": null,
+      "expected": null
+    },
+    {
+      "name": "no system still masks",
+      "system": null,
+      "input": "SELECT a FROM b WHERE c = 'x' AND d = 1",
+      "expected": "SELECT a FROM b WHERE c = ? AND d = ?"
+    },
+    {
+      "name": "hex string literal: the quoted part is masked as a string first, the X prefix stays",
+      "system": "postgresql",
+      "input": "SELECT a FROM b WHERE c = X'0aff'",
+      "expected": "SELECT a FROM b WHERE c = X?"
+    },
+    {
+      "name": "decimal and exponent forms",
+      "system": "postgresql",
+      "input": "SELECT a FROM b WHERE c > 1.5 AND d < 2e10 AND e = 3E-2",
+      "expected": "SELECT a FROM b WHERE c > ? AND d < ? AND e = ?"
+    },
+    {
+      "name": "IN list with strings and newlines",
+      "system": "postgresql",
+      "input": "SELECT a FROM b WHERE c IN (\n'a',\n'b'\n)",
+      "expected": "SELECT a FROM b WHERE c IN (?)"
+    },
+    {
+      "name": "lower-case keywords keep their case",
+      "system": "postgresql",
+      "input": "select a from b where c in (1,2) and d = true",
+      "expected": "select a from b where c IN (?) and d = ?"
+    },
+    {
+      "name": "several trailing semicolons",
+      "system": "postgresql",
+      "input": "DELETE FROM b WHERE c = 1 ; ;",
+      "expected": "DELETE FROM b WHERE c = ?"
+    },
+    {
+      "name": "multi-line block comment",
+      "system": "postgresql",
+      "input": "SELECT a /* line one\nline two 'x' */ FROM b",
+      "expected": "SELECT a FROM b"
+    },
+    {
+      "name": "line comment at the end",
+      "system": "postgresql",
+      "input": "SELECT a FROM b -- card 4111111111111111",
+      "expected": "SELECT a FROM b"
+    },
+    {
+      "name": "Turkish text in a string",
+      "system": "postgresql",
+      "input": "SELECT a FROM müşteri WHERE ad = 'Çağrı Öztürk'",
+      "expected": "SELECT a FROM müşteri WHERE ad = ?"
+    },
+    {
+      "name": "parameter placeholders in VALUES rows",
+      "system": "postgresql",
+      "input": "INSERT INTO t (a) VALUES (?), (?), (?)",
+      "expected": "INSERT INTO t (a) VALUES (?)"
+    },
+    {
+      "name": "number inside an identifier with a dollar",
+      "system": "postgresql",
+      "input": "SELECT col$1 FROM b WHERE c = 2",
+      "expected": "SELECT col$1 FROM b WHERE c = ?"
+    },
+    {
+      "name": "number after a closing parenthesis keeps",
+      "system": "postgresql",
+      "input": "SELECT (a)1 FROM b",
+      "expected": "SELECT (a)1 FROM b"
+    },
+    {
+      "name": "only ASCII whitespace collapses (a no-break space stays)",
+      "system": "postgresql",
+      "input": "SELECT a  FROM b",
+      "expected": "SELECT a  FROM b"
+    },
+    {
+      "name": "trimming removes control characters",
+      "system": "postgresql",
+      "input": "\u0001SELECT 1\u0001",
+      "expected": "SELECT ?"
+    },
+    {
+      "name": "trimming keeps a leading no-break space",
+      "system": "postgresql",
+      "input": " SELECT 1",
+      "expected": " SELECT ?"
+    },
+    {
+      "name": "an IN list after a no-break space does not collapse",
+      "system": "postgresql",
+      "input": "SELECT a FROM b WHERE c IN (1, 2)",
+      "expected": "SELECT a FROM b WHERE c IN (?, ?)"
+    },
+    {
+      "name": "digits after a non-ASCII letter are masked",
+      "system": "postgresql",
+      "input": "SELECT ş1 FROM b",
+      "expected": "SELECT ş? FROM b"
+    }
+  ]
+}

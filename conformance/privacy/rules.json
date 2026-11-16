@@ -1,0 +1,584 @@
+{
+  "description": "AttributeRules, SqlStatementNormalizer.isSqlSystem, TracingLimits and ExportRules decisions. Shared by every LogDrop tracing implementation; the Java core is the reference.",
+  "attributes": [
+    {
+      "key": "http.route",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "url.template",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "http.request.method",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "http.response.status_code",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "rpc.grpc.status_code",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "messaging.operation",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "messaging.destination.template",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "peer.service",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "db.system",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "db.operation",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "db.namespace",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "server.address",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "exception.type",
+      "allowed": [],
+      "exportable": true,
+      "customAllowed": false
+    },
+    {
+      "key": "url.full",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "url.query",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "url.path",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "http.url",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "http.target",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "client.address",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "network.peer.address",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "user_agent.original",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "thread.name",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "code.function",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "db.statement",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "db.query.text",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "order.type",
+      "allowed": [
+        "order.type"
+      ],
+      "exportable": true,
+      "customAllowed": true
+    },
+    {
+      "key": "order.type",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "db.query.text",
+      "allowed": [
+        "db.query.text"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "authorization",
+      "allowed": [
+        "authorization"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "x.api_key",
+      "allowed": [
+        "x.api_key"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "x.apikey",
+      "allowed": [
+        "x.apikey"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "x-api-key",
+      "allowed": [
+        "x-api-key"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "session.cookie",
+      "allowed": [
+        "session.cookie"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "refresh_token",
+      "allowed": [
+        "refresh_token"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "client.secret",
+      "allowed": [
+        "client.secret"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "user.credentials",
+      "allowed": [
+        "user.credentials"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "http.request.header.accept",
+      "allowed": [
+        "http.request.header.accept"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "http.response.header.content-type",
+      "allowed": [
+        "http.response.header.content-type"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "db.query.parameter.0",
+      "allowed": [
+        "db.query.parameter.0"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "exception.message",
+      "allowed": [
+        "exception.message"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "exception.stacktrace",
+      "allowed": [
+        "exception.stacktrace"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "DB.Statement",
+      "allowed": [
+        "DB.Statement"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "user.Password.hash",
+      "allowed": [
+        "user.Password.hash"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "logdrop.project.id",
+      "allowed": [
+        "logdrop.project.id"
+      ],
+      "exportable": false,
+      "customAllowed": false
+    },
+    {
+      "key": "HTTP.ROUTE",
+      "allowed": [],
+      "exportable": false,
+      "customAllowed": false
+    }
+  ],
+  "sqlSystems": {
+    "sql": [
+      "postgresql",
+      "H2",
+      "microsoft.sql_server",
+      "mysql",
+      " MariaDB ",
+      "oracle",
+      "sqlite",
+      "clickhouse",
+      "other_sql",
+      "\u0001mysql"
+    ],
+    "notSql": [
+      "redis",
+      "mongodb",
+      "elasticsearch",
+      "cassandra",
+      "",
+      null
+    ]
+  },
+  "customKeys": {
+    "valid": [
+      "order.type",
+      "a",
+      "A1_b-c.d",
+      "kaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    ],
+    "invalid": [
+      "1bad",
+      "has space",
+      "",
+      "_lead",
+      ".lead",
+      "ünicode",
+      null,
+      "kaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    ]
+  },
+  "limits": {
+    "mvp": {
+      "maxActiveSpans": 1024,
+      "maxAttributes": 24,
+      "maxEvents": 16,
+      "maxLinks": 16,
+      "maxStringLength": 256
+    },
+    "invalid": [
+      {
+        "maxActiveSpans": 0,
+        "maxAttributes": 1,
+        "maxEvents": 1,
+        "maxLinks": 1,
+        "maxStringLength": 1
+      },
+      {
+        "maxActiveSpans": 100001,
+        "maxAttributes": 1,
+        "maxEvents": 1,
+        "maxLinks": 1,
+        "maxStringLength": 1
+      },
+      {
+        "maxActiveSpans": 1,
+        "maxAttributes": 129,
+        "maxEvents": 1,
+        "maxLinks": 1,
+        "maxStringLength": 1
+      },
+      {
+        "maxActiveSpans": 1,
+        "maxAttributes": 1,
+        "maxEvents": 0,
+        "maxLinks": 1,
+        "maxStringLength": 1
+      },
+      {
+        "maxActiveSpans": 1,
+        "maxAttributes": 1,
+        "maxEvents": 1,
+        "maxLinks": 129,
+        "maxStringLength": 1
+      },
+      {
+        "maxActiveSpans": 1,
+        "maxAttributes": 1,
+        "maxEvents": 1,
+        "maxLinks": 1,
+        "maxStringLength": 4097
+      }
+    ]
+  },
+  "endpoints": {
+    "valid": [
+      {
+        "endpoint": "https://otel.example.com",
+        "insecure": false,
+        "traces": "https://otel.example.com/v1/traces"
+      },
+      {
+        "endpoint": "https://otel.example.com/",
+        "insecure": false,
+        "traces": "https://otel.example.com/v1/traces"
+      },
+      {
+        "endpoint": "https://otel.example.com:8443/v1/traces",
+        "insecure": false,
+        "traces": "https://otel.example.com:8443/v1/traces"
+      },
+      {
+        "endpoint": "http://gateway:4318",
+        "insecure": true,
+        "traces": "http://gateway:4318/v1/traces"
+      },
+      {
+        "endpoint": "https://HOST.example.com",
+        "insecure": false,
+        "traces": "https://HOST.example.com/v1/traces"
+      },
+      {
+        "endpoint": "https://10.0.0.1:4318",
+        "insecure": false,
+        "traces": "https://10.0.0.1:4318/v1/traces"
+      },
+      {
+        "endpoint": "https://[::1]:4318",
+        "insecure": false,
+        "traces": "https://[::1]:4318/v1/traces"
+      },
+      {
+        "endpoint": "https://xn--mller-kva.de",
+        "insecure": false,
+        "traces": "https://xn--mller-kva.de/v1/traces"
+      }
+    ],
+    "invalid": [
+      {
+        "endpoint": "http://gateway:4318",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://user:pw@host",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://host/?key=1",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://host/#x",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://host/v1/metrics",
+        "insecure": false
+      },
+      {
+        "endpoint": "ftp://host",
+        "insecure": false
+      },
+      {
+        "endpoint": "not a url",
+        "insecure": false
+      },
+      {
+        "endpoint": "",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://host:0",
+        "insecure": false
+      },
+      {
+        "endpoint": null,
+        "insecure": false
+      },
+      {
+        "endpoint": "https://otel.example.com//",
+        "insecure": false
+      },
+      {
+        "endpoint": "HTTPS://host",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://my_host",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://host/v1/traces/",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://ho st",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://host:65536",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://-host",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://host..com",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://müller.de",
+        "insecure": false
+      },
+      {
+        "endpoint": "https://host/./v1/traces",
+        "insecure": false
+      },
+      {
+        "endpoint": "https:host",
+        "insecure": false
+      },
+      {
+        "endpoint": "https:///v1/traces",
+        "insecure": false
+      }
+    ]
+  },
+  "credentials": {
+    "valid": [
+      "ldtk_abc-123",
+      "!~"
+    ],
+    "invalid": [
+      "",
+      "has space",
+      "line\n",
+      "tab\t",
+      "ü",
+      null
+    ],
+    "maxLength": 512
+  },
+  "serviceIdentity": {
+    "valid": [
+      [
+        "orders",
+        "production",
+        "",
+        "1.2.3"
+      ],
+      [
+        "müşteri-servisi"
+      ]
+    ],
+    "invalid": [
+      [
+        " "
+      ],
+      [
+        ""
+      ],
+      [
+        "orders",
+        "prod\u0007"
+      ],
+      [
+        "orders"
+      ],
+      [
+        null
+      ]
+    ]
+  }
+}

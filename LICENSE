@@ -1,0 +1,132 @@
+LogDrop Client Library License
+Version 1.0, October 2026
+
+Copyright (c) 2026 Initial Code (LogDrop). All rights reserved.
+
+This License applies to the LogDrop client libraries published by Initial Code
+("LogDrop", "we", "us"), including logdrop-api, logdrop-api-coroutines and
+logdrop-tracing-core, and to the LogDrop-authored parts of the LogDrop Java agent,
+in source, binary or any other form, together with their documentation
+(the "Software"). By downloading, installing, copying or using the Software you
+("Licensee", "you") agree to this License. If you use the Software on behalf of an
+organization, you accept this License for that organization.
+
+1. Definitions
+
+1.1 "LogDrop Service" means the hosted observability service operated by LogDrop,
+    including its ingestion endpoints, APIs and user interfaces.
+1.2 "Customer Application" means software you develop or operate in which the
+    Software is included or with which the Software runs, for example an
+    application, service or container image.
+1.3 "Third-Party Components" means software included with the Software that is
+    owned by others and licensed under its own terms, including the
+    OpenTelemetry Java Instrumentation agent and its dependencies.
+
+2. License grant
+
+2.1 Subject to this License, LogDrop grants you a non-exclusive, non-transferable,
+    non-sublicensable, worldwide, royalty-free license, for as long as you comply
+    with this License, to:
+    (a) install, run and use the Software solely to collect telemetry from Customer
+        Applications and to send it to the LogDrop Service; and
+    (b) include the Software, unmodified and in the binary form we publish, in your
+        Customer Applications, and distribute or deploy it only as an inseparable
+        part of those Customer Applications, to your own users or within your
+        organization, including in container images and Kubernetes deployments.
+2.2 Your affiliates, contractors and service providers may exercise these rights
+    on your behalf, provided they do so only for you and you remain responsible
+    for their compliance with this License.
+
+3. Restrictions
+
+Except as expressly allowed in Section 2 or by mandatory applicable law, you must not:
+    (a) modify, translate, adapt or create derivative works of the Software;
+    (b) distribute, sell, rent, lease, sublicense or otherwise make the Software
+        available on a stand-alone basis or other than as part of a Customer
+        Application;
+    (c) use the Software, or any part of it, to send telemetry to a service other
+        than the LogDrop Service, or to build or support a product or service that
+        competes with the LogDrop Service;
+    (d) decompile, disassemble or reverse engineer the Software, except to the
+        extent that applicable law expressly permits it despite this restriction,
+        including for interoperability;
+    (e) remove, alter or obscure any copyright, license or attribution notice in
+        the Software; or
+    (f) use the Software in violation of applicable law or of the terms that
+        govern your use of the LogDrop Service.
+
+4. Third-Party Components
+
+Third-Party Components are licensed to you under their own licenses, not this
+License. The OpenTelemetry Java Instrumentation agent and its dependencies are
+licensed under the Apache License, Version 2.0, and their license and NOTICE files
+are kept in the distribution. Nothing in this License restricts any right you have
+under the license of a Third-Party Component.
+
+5. Ownership and feedback
+
+The Software is licensed, not sold. LogDrop and its licensors keep all rights, title
+and interest in the Software, including all intellectual property rights. No right is
+granted by implication or otherwise except as expressly stated in this License. If you
+send us suggestions or feedback about the Software, we may use them without any
+obligation to you.
+
+6. LogDrop Service
+
+Use of the LogDrop Service, including the data the Software sends to it, is governed
+by the agreement or terms under which you use the LogDrop Service. This License does
+not grant access to the LogDrop Service.
+
+7. Updates
+
+LogDrop may publish updates of the Software. Updates are governed by this License or,
+if an update comes with a different license, by that license. LogDrop has no
+obligation to provide updates, maintenance or support under this License.
+
+8. Disclaimer of warranties
+
+THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE, TITLE AND NON-INFRINGEMENT, TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW.
+LOGDROP DOES NOT WARRANT THAT THE SOFTWARE WILL BE ERROR-FREE OR UNINTERRUPTED, OR
+THAT ALL TELEMETRY WILL BE COLLECTED OR DELIVERED.
+
+9. Limitation of liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, LOGDROP AND ITS LICENSORS WILL NOT
+BE LIABLE UNDER THIS LICENSE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR
+PUNITIVE DAMAGES, OR FOR ANY LOSS OF PROFITS, REVENUE, DATA OR GOODWILL, ARISING OUT OF
+OR RELATED TO THE SOFTWARE, EVEN IF ADVISED OF THEIR POSSIBILITY. LOGDROP'S TOTAL
+LIABILITY UNDER THIS LICENSE WILL NOT EXCEED ONE HUNDRED US DOLLARS (USD 100). NOTHING
+IN THIS LICENSE LIMITS LIABILITY THAT CANNOT BE LIMITED UNDER APPLICABLE LAW,
+INCLUDING LIABILITY FOR GROSS NEGLIGENCE OR WILFUL MISCONDUCT.
+
+10. Termination
+
+This License ends automatically if you breach it and do not cure the breach within
+thirty (30) days after notice from LogDrop, or immediately if the breach cannot be
+cured. LogDrop may also end this License by notice if your right to use the LogDrop
+Service ends. When this License ends, you must stop using the Software and stop
+distributing Customer Applications that include it, except that copies already
+deployed to your users before termination may keep running until your next release,
+for no longer than ninety (90) days. Sections 3, 4, 5, 8, 9, 10 and 11 survive
+termination.
+
+11. General
+
+11.1 Export and sanctions. You will comply with all export control and sanctions
+     laws that apply to your use and distribution of the Software.
+11.2 Governing law. This License is governed by the laws of the Republic of Türkiye,
+     without regard to its conflict-of-laws rules.
+11.3 Entire agreement. This License is the entire agreement between you and LogDrop
+     about the Software and replaces any prior understanding about it. If you have a
+     separate signed agreement with LogDrop that covers the Software, that agreement
+     prevails where it conflicts with this License.
+11.4 Severability and waiver. If a provision of this License is held unenforceable,
+     it will be enforced to the maximum extent permissible and the remaining
+     provisions stay in effect. A failure to enforce a provision is not a waiver.
+11.5 Assignment. You may not assign or transfer this License without LogDrop's prior
+     written consent. LogDrop may assign this License in connection with a merger,
+     acquisition or sale of all or substantially all of the related business.
+
+Contact: legal@logdrop.io

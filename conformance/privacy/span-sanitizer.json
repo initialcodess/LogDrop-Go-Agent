@@ -1,0 +1,238 @@
+{
+  "description": "PrivacySpanProcessor: a span recorded with the given attributes, status, events and links must be exported exactly as expected. Attribute values are typed (string, long, double, boolean, stringArray, longArray); a double may be \"NaN\" or \"Infinity\". When more exportable attributes than the limit are recorded, which ones are kept is not specified (Java keeps them in its hash order): such a case gives attributeCount and attributesFrom instead of attributes. Shared by every LogDrop tracing implementation; the Java core is the reference.",
+  "cases": [
+    {
+      "name": "automatic HTTP span keeps only standard and allowed keys",
+      "limits": "mvp", "allowed": ["db.query.text", "authorization", "order.type"],
+      "span": {
+        "name": "GET /orders",
+        "attributes": [
+          {"key": "http.route", "type": "string", "value": "/orders"},
+          {"key": "order.type", "type": "string", "value": "delivery"},
+          {"key": "db.query.text", "type": "string", "value": "select password from private"},
+          {"key": "authorization", "type": "string", "value": "Bearer private"},
+          {"key": "url.full", "type": "string", "value": "https://example.com/?token=private"},
+          {"key": "order.type.list", "type": "stringArray", "value": ["a"]}
+        ],
+        "status": {"code": "ERROR", "description": "private exception details"},
+        "events": [{"name": "exception", "attributes": [
+          {"key": "exception.type", "type": "string", "value": "java.lang.IllegalStateException"},
+          {"key": "exception.message", "type": "string", "value": "private exception details"},
+          {"key": "exception.stacktrace", "type": "string", "value": "private stack"}
+        ]}],
+        "links": [{"attributes": [{"key": "authorization", "type": "string", "value": "private-link-secret"}]}]
+      },
+      "expected": {
+        "name": "GET /orders",
+        "attributes": {"http.route": "/orders", "order.type": "delivery"},
+        "status": {"code": "ERROR", "description": ""},
+        "events": [{"name": "exception", "attributes": {"exception.type": "java.lang.IllegalStateException"}}],
+        "links": [{"attributes": {}}]
+      }
+    },
+    {
+      "name": "SQL span exports only the value-free template",
+      "limits": "mvp", "allowed": ["db.statement", "db.query.text"],
+      "span": {
+        "name": "SELECT shop.orders",
+        "attributes": [
+          {"key": "db.system", "type": "string", "value": "postgresql"},
+          {"key": "db.operation", "type": "string", "value": "SELECT"},
+          {"key": "db.statement", "type": "string", "value": "SELECT name FROM orders WHERE id IN (1, 2) AND token = 'sql-secret'"}
+        ],
+        "events": [{"name": "retry", "attributes": [{"key": "db.statement", "type": "string", "value": "SELECT 'event-secret'"}]}]
+      },
+      "expected": {
+        "name": "SELECT shop.orders",
+        "attributes": {"db.system": "postgresql", "db.operation": "SELECT",
+                       "db.query.text": "SELECT name FROM orders WHERE id IN (?) AND token = ?"},
+        "status": {"code": "UNSET", "description": ""},
+        "events": [{"name": "retry", "attributes": {}}],
+        "links": []
+      }
+    },
+    {
+      "name": "db.query.text wins over db.statement and db.system.name over db.system",
+      "limits": "mvp", "allowed": [],
+      "span": {
+        "name": "query",
+        "attributes": [
+          {"key": "db.system.name", "type": "string", "value": "mysql"},
+          {"key": "db.system", "type": "string", "value": "redis"},
+          {"key": "db.query.text", "type": "string", "value": "SELECT a FROM b WHERE c = \"x\""},
+          {"key": "db.statement", "type": "string", "value": "SELECT other FROM b"}
+        ]
+      },
+      "expected": {
+        "name": "query",
+        "attributes": {"db.system.name": "mysql", "db.system": "redis", "db.query.text": "SELECT a FROM b WHERE c = ?"},
+        "status": {"code": "UNSET", "description": ""}, "events": [], "links": []
+      }
+    },
+    {
+      "name": "a blank db.system.name falls back to db.system",
+      "limits": "mvp", "allowed": [],
+      "span": {
+        "name": "query",
+        "attributes": [
+          {"key": "db.system.name", "type": "string", "value": "  "},
+          {"key": "db.system", "type": "string", "value": "postgresql"},
+          {"key": "db.statement", "type": "string", "value": "SELECT 1"}
+        ]
+      },
+      "expected": {
+        "name": "query",
+        "attributes": {"db.system.name": "  ", "db.system": "postgresql", "db.query.text": "SELECT ?"},
+        "status": {"code": "UNSET", "description": ""}, "events": [], "links": []
+      }
+    },
+    {
+      "name": "non-SQL statements are never exported",
+      "limits": "mvp", "allowed": [],
+      "span": {
+        "name": "SET",
+        "attributes": [
+          {"key": "db.system", "type": "string", "value": "redis"},
+          {"key": "db.statement", "type": "string", "value": "SET session:person@example.com ?"}
+        ]
+      },
+      "expected": {
+        "name": "SET", "attributes": {"db.system": "redis"},
+        "status": {"code": "UNSET", "description": ""}, "events": [], "links": []
+      }
+    },
+    {
+      "name": "MongoDB statements are never exported",
+      "limits": "mvp", "allowed": [],
+      "span": {
+        "name": "find",
+        "attributes": [
+          {"key": "db.system", "type": "string", "value": "mongodb"},
+          {"key": "db.statement", "type": "string", "value": "{\"email\":\"person@example.com\"}"}
+        ]
+      },
+      "expected": {
+        "name": "find", "attributes": {"db.system": "mongodb"},
+        "status": {"code": "UNSET", "description": ""}, "events": [], "links": []
+      }
+    },
+    {
+      "name": "counts, events, links and strings are bounded; NaN is dropped",
+      "limits": {"maxActiveSpans": 10, "maxAttributes": 3, "maxEvents": 2, "maxLinks": 1, "maxStringLength": 5},
+      "allowed": ["a.1", "a.2", "a.3", "a.4"],
+      "span": {
+        "name": "a-very-long-span-name",
+        "attributes": [
+          {"key": "a.1", "type": "string", "value": "abcdefgh"},
+          {"key": "a.2", "type": "long", "value": 2},
+          {"key": "a.3", "type": "double", "value": "NaN"},
+          {"key": "a.4", "type": "boolean", "value": true}
+        ],
+        "events": [{"name": "one-long-event"}, {"name": "two"}, {"name": "three"}],
+        "links": [{}, {}]
+      },
+      "expected": {
+        "name": "a-ver",
+        "attributes": {"a.1": "abcde", "a.2": 2, "a.4": true},
+        "status": {"code": "UNSET", "description": ""},
+        "events": [{"name": "one-l", "attributes": {}}, {"name": "two", "attributes": {}}],
+        "links": [{"attributes": {}}]
+      }
+    },
+    {
+      "name": "the attribute limit keeps that many of the exportable keys",
+      "limits": {"maxActiveSpans": 10, "maxAttributes": 2, "maxEvents": 1, "maxLinks": 1, "maxStringLength": 256},
+      "allowed": ["z.1", "a.1", "m.1"],
+      "span": {
+        "name": "ordered",
+        "attributes": [
+          {"key": "z.1", "type": "string", "value": "z"},
+          {"key": "m.1", "type": "string", "value": "m"},
+          {"key": "a.1", "type": "string", "value": "a"}
+        ]
+      },
+      "expected": {
+        "name": "ordered", "attributeCount": 2, "attributesFrom": {"a.1": "a", "m.1": "m", "z.1": "z"},
+        "status": {"code": "UNSET", "description": ""}, "events": [], "links": []
+      }
+    },
+    {
+      "name": "dropped keys do not use up the limit",
+      "limits": {"maxActiveSpans": 10, "maxAttributes": 2, "maxEvents": 1, "maxLinks": 1, "maxStringLength": 256},
+      "allowed": [],
+      "span": {
+        "name": "dropped",
+        "attributes": [
+          {"key": "a.secret", "type": "string", "value": "x"},
+          {"key": "b.unknown", "type": "string", "value": "x"},
+          {"key": "http.route", "type": "string", "value": "/a"},
+          {"key": "http.request.method", "type": "string", "value": "GET"}
+        ]
+      },
+      "expected": {
+        "name": "dropped", "attributes": {"http.request.method": "GET", "http.route": "/a"},
+        "status": {"code": "UNSET", "description": ""}, "events": [], "links": []
+      }
+    },
+    {
+      "name": "no SQL template when the attribute limit is already reached",
+      "limits": {"maxActiveSpans": 10, "maxAttributes": 2, "maxEvents": 1, "maxLinks": 1, "maxStringLength": 256},
+      "allowed": [],
+      "span": {
+        "name": "full",
+        "attributes": [
+          {"key": "db.system", "type": "string", "value": "postgresql"},
+          {"key": "db.operation", "type": "string", "value": "SELECT"},
+          {"key": "db.statement", "type": "string", "value": "SELECT a FROM b WHERE c = 1"}
+        ]
+      },
+      "expected": {
+        "name": "full", "attributes": {"db.operation": "SELECT", "db.system": "postgresql"},
+        "status": {"code": "UNSET", "description": ""}, "events": [], "links": []
+      }
+    },
+    {
+      "name": "the SQL template is bounded like any string",
+      "limits": {"maxActiveSpans": 10, "maxAttributes": 24, "maxEvents": 1, "maxLinks": 1, "maxStringLength": 10},
+      "allowed": [],
+      "span": {
+        "name": "q",
+        "attributes": [
+          {"key": "db.system", "type": "string", "value": "postgresql"},
+          {"key": "db.statement", "type": "string", "value": "SELECT a FROM b WHERE c = 1"}
+        ]
+      },
+      "expected": {
+        "name": "q", "attributes": {"db.system": "postgresql","db.query.text": "SELECT a F"},
+        "status": {"code": "UNSET", "description": ""}, "events": [], "links": []
+      }
+    },
+    {
+      "name": "numbers, booleans and arrays",
+      "limits": "mvp", "allowed": ["n.long", "n.double", "n.inf", "n.bool", "n.longs"],
+      "span": {
+        "name": "types",
+        "attributes": [
+          {"key": "n.long", "type": "long", "value": 42},
+          {"key": "n.double", "type": "double", "value": 1.5},
+          {"key": "n.inf", "type": "double", "value": "Infinity"},
+          {"key": "n.bool", "type": "boolean", "value": false},
+          {"key": "n.longs", "type": "longArray", "value": [1, 2]},
+          {"key": "http.response.status_code", "type": "long", "value": 503}
+        ],
+        "status": {"code": "OK", "description": ""}
+      },
+      "expected": {
+        "name": "types",
+        "attributes": {"http.response.status_code": 503, "n.bool": false, "n.double": 1.5, "n.long": 42},
+        "status": {"code": "OK", "description": ""}, "events": [], "links": []
+      }
+    },
+    {
+      "name": "status messages are always cleared",
+      "limits": "mvp", "allowed": [],
+      "span": {"name": "s", "attributes": [], "status": {"code": "ERROR", "description": "card 4111111111111111 declined"}},
+      "expected": {"name": "s", "attributes": {}, "status": {"code": "ERROR", "description": ""}, "events": [], "links": []}
+    }
+  ]
+}
