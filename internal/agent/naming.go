@@ -35,8 +35,44 @@ func stringOf(values map[string]attribute.Value, key string) (string, bool) {
 	return v.AsString(), true
 }
 
+// grpcCodes are the gRPC status codes by name (rpc.response.status_code) and number (rpc.grpc.status_code).
+var grpcCodes = map[string]int64{
+	"OK": 0, "CANCELLED": 1, "UNKNOWN": 2, "INVALID_ARGUMENT": 3, "DEADLINE_EXCEEDED": 4, "NOT_FOUND": 5,
+	"ALREADY_EXISTS": 6, "PERMISSION_DENIED": 7, "RESOURCE_EXHAUSTED": 8, "FAILED_PRECONDITION": 9, "ABORTED": 10,
+	"OUT_OF_RANGE": 11, "UNIMPLEMENTED": 12, "INTERNAL": 13, "UNAVAILABLE": 14, "DATA_LOSS": 15, "UNAUTHENTICATED": 16,
+}
+
+// rpcKeys gives RPC spans of the newer semantic conventions (OpenTelemetry Go's gRPC instrumentation: rpc.system.name,
+// rpc.method "pkg.Service/Method", rpc.response.status_code "OK") the keys the Java agent sends and the APM reads:
+// rpc.system, rpc.service and rpc.method, and the numeric rpc.grpc.status_code.
+func rpcKeys(values map[string]attribute.Value) {
+	system, ok := stringOf(values, "rpc.system.name")
+	if !ok {
+		return
+	}
+	if _, has := values["rpc.system"]; !has {
+		values["rpc.system"] = attribute.StringValue(system)
+	}
+	if method, ok := stringOf(values, "rpc.method"); ok {
+		if _, has := values["rpc.service"]; !has {
+			if service, short, found := strings.Cut(method, "/"); found && service != "" && short != "" {
+				values["rpc.service"] = attribute.StringValue(service)
+				values["rpc.method"] = attribute.StringValue(short)
+			}
+		}
+	}
+	if code, ok := stringOf(values, "rpc.response.status_code"); ok && system == "grpc" {
+		if number, known := grpcCodes[code]; known {
+			if _, has := values["rpc.grpc.status_code"]; !has {
+				values["rpc.grpc.status_code"] = attribute.Int64Value(number)
+			}
+		}
+	}
+}
+
 // ApplyNaming returns the span name to export and renames the attributes in place.
 func ApplyNaming(name string, values map[string]attribute.Value) string {
+	rpcKeys(values)
 	_, hasMethod := values["http.request.method"]
 	_, hasLegacyMethod := values["http.method"]
 	if version, ok := stringOf(values, protocolVersion); ok && (version == "1.1" || version == "1.0") && (hasMethod || hasLegacyMethod) {

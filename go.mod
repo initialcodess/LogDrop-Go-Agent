@@ -10,6 +10,7 @@ require (
 )
 
 require (
+	github.com/XSAM/otelsql v0.44.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/felixge/httpsnoop v1.1.0 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect

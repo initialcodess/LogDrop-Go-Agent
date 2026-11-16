@@ -16,12 +16,8 @@ type handlerConfig struct {
 	route func(*http.Request) string
 }
 
-// RouteFrom gives Handler the route template of a request for routers other than net/http's ServeMux, read after
-// the router has handled it. With chi, for example:
-//
-//	logdrop.Handler(router, logdrop.RouteFrom(func(r *http.Request) string {
-//		return chi.RouteContext(r.Context()).RoutePattern()
-//	}))
+// RouteFrom gives Handler or Middleware the route template of a request for routers other than net/http's ServeMux,
+// read after the router has handled the request (see Middleware for chi).
 func RouteFrom(route func(*http.Request) string) HandlerOption {
 	return func(c *handlerConfig) { c.route = route }
 }
@@ -65,6 +61,16 @@ func Handler(handler http.Handler, options ...HandlerOption) http.Handler {
 		}
 		return r.Method
 	}))
+}
+
+// Middleware is Handler as router middleware, for routers that know the route only inside their own handling, such
+// as chi:
+//
+//	router.Use(logdrop.Middleware(logdrop.RouteFrom(func(r *http.Request) string {
+//		return chi.RouteContext(r.Context()).RoutePattern()
+//	})))
+func Middleware(options ...HandlerOption) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler { return Handler(next, options...) }
 }
 
 // Transport traces the requests sent through base (http.DefaultTransport when nil) and passes the trace on to the

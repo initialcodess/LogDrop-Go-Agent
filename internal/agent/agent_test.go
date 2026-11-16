@@ -106,6 +106,13 @@ func TestDependencyNaming(t *testing.T) {
 	if _, ok := v["network.protocol.version"]; ok {
 		t.Fatal("HTTP/1.1 version kept")
 	}
+	v = values(attribute.String("rpc.system.name", "grpc"), attribute.String("rpc.method", "shop.Orders/Get"),
+		attribute.String("rpc.response.status_code", "NOT_FOUND"))
+	ApplyNaming("shop.Orders/Get", v)
+	if v["rpc.system"].AsString() != "grpc" || v["rpc.service"].AsString() != "shop.Orders" || v["rpc.method"].AsString() != "Get" ||
+		v["rpc.grpc.status_code"].AsInt64() != 5 {
+		t.Fatalf("grpc keys %+v", v)
+	}
 	v = values(attribute.String("messaging.system", "rabbitmq"))
 	ApplyNaming("orders publish", v)
 	if v["peer.service"].AsString() != "RabbitMQ" {
