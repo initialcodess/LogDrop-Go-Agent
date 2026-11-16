@@ -1,0 +1,15 @@
+# client-helm/logdrop-infrastructure values for the disposable Go proof: the trace injector only. Go needs no agent
+# image; the Java image below is never pulled (no Java pod here).
+enabled: true
+clusterName: go-proof
+networkPolicy:
+  enabled: false
+tracing:
+  enabled: true
+  endpoint: http://sink.logdrop-go-proof.svc:4318
+  allowInsecureTransport: true
+  namespaces: [logdrop-go-proof]
+  environment: kind
+  requirePodLabel: true
+  java:
+    image: {repository: logdrop-javaagent, tag: not-used, pullPolicy: Never}

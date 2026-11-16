@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: sink, namespace: logdrop-go-proof, labels: {app: sink}}
+spec:
+  selector: {matchLabels: {app: sink}}
+  template:
+    metadata: {labels: {app: sink}}
+    spec:
+      containers:
+        - {name: sink, image: logdrop-go-sink:proof, imagePullPolicy: Never, ports: [{containerPort: 4318}]}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: sink, namespace: logdrop-go-proof}
+spec: {selector: {app: sink}, ports: [{port: 4318, targetPort: 4318}]}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: redis, namespace: logdrop-go-proof}
+spec:
+  selector: {matchLabels: {app: redis}}
+  template:
+    metadata: {labels: {app: redis}}
+    spec:
+      containers:
+        - {name: redis, image: redis:7.4-alpine, imagePullPolicy: IfNotPresent, ports: [{containerPort: 6379}]}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: redis, namespace: logdrop-go-proof}
+spec: {selector: {app: redis}, ports: [{port: 6379, targetPort: 6379}]}
+---
+# The Go demo with Redis; it calls payments, so one request is one trace across both. The demo calls logdrop.Start;
+# the injector gives it only the key file and the LOGDROP_* settings.
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: orders, namespace: logdrop-go-proof}
+spec:
+  selector: {matchLabels: {app: orders}}
+  template:
+    metadata:
+      labels: {app: orders, logdrop.io/trace: go, app.kubernetes.io/version: "1.0.0"}
+      annotations: {logdrop.io/trace: go}
+    spec:
+      securityContext: {runAsNonRoot: true, runAsUser: 10001}
+      containers:
+        - name: app
+          image: logdrop-go-demo:dev
+          imagePullPolicy: Never
+          env:
+            - {name: REDIS_URL, value: "redis:6379"}
+            - {name: DEMO_SPRING_URL, value: "http://payments:28120"}
+            - {name: LOGDROP_ALLOWED_ATTRIBUTE_KEYS, value: "demo.kind"}
+          securityContext: {readOnlyRootFilesystem: true, allowPrivilegeEscalation: false, capabilities: {drop: [ALL]}}
+          ports: [{containerPort: 28120}]
+---
+apiVersion: v1
+kind: Service
+metadata: {name: orders, namespace: logdrop-go-proof}
+spec: {selector: {app: orders}, ports: [{port: 28120, targetPort: 28120}]}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: payments, namespace: logdrop-go-proof}
+spec:
+  selector: {matchLabels: {app: payments}}
+  template:
+    metadata:
+      labels: {app: payments, logdrop.io/trace: go}
+      annotations: {logdrop.io/trace: go, logdrop.io/service: payments}
+    spec:
+      securityContext: {runAsNonRoot: true, runAsUser: 10001}
+      containers:
+        - name: app
+          image: logdrop-go-demo:dev
+          imagePullPolicy: Never
+          securityContext: {readOnlyRootFilesystem: true, allowPrivilegeEscalation: false, capabilities: {drop: [ALL]}}
+          ports: [{containerPort: 28120}]
+---
+apiVersion: v1
+kind: Service
+metadata: {name: payments, namespace: logdrop-go-proof}
+spec: {selector: {app: payments}, ports: [{port: 28120, targetPort: 28120}]}

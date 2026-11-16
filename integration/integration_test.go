@@ -23,6 +23,7 @@ import (
 	"github.com/initialcodess/LogDrop-Go-Agent/logdrop"
 	"github.com/initialcodess/LogDrop-Go-Agent/logdropamqp"
 	"github.com/initialcodess/LogDrop-Go-Agent/logdropkafka"
+	"github.com/initialcodess/LogDrop-Go-Agent/logdropredis"
 	"github.com/initialcodess/LogDrop-Go-Agent/logdropsql"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -31,7 +32,6 @@ import (
 	"github.com/labstack/echo/v4"
 	echov5 "github.com/labstack/echo/v5"
 	amqp "github.com/rabbitmq/amqp091-go"
-	"github.com/redis/go-redis/extra/redisotel/v9"
 	"github.com/redis/go-redis/v9"
 	"github.com/segmentio/kafka-go"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
@@ -263,16 +263,22 @@ func TestIntegrations(t *testing.T) {
 
 	t.Run("redis", func(t *testing.T) {
 		rdb := redis.NewClient(&redis.Options{Addr: os.Getenv("LOGDROP_IT_REDIS")})
-		if err := redisotel.InstrumentTracing(rdb); err != nil {
+		if err := logdropredis.Instrument(rdb); err != nil {
 			t.Fatal(err)
 		}
 		defer rdb.Close()
 		if err := rdb.Set(ctx, "private-key", "private-body", time.Minute).Err(); err != nil {
 			t.Fatal(err)
 		}
-		s := find(t, flush(t, g), 3, func(s otlptest.Span) bool { return s.Attributes["db.operation.name"] == "SET" })
+		spans := flush(t, g)
+		s := find(t, spans, 3, func(s otlptest.Span) bool { return s.Attributes["db.operation.name"] == "SET" })
 		if s.Name != "SET" || s.Attributes["db.system.name"] == nil && s.Attributes["db.system"] == nil {
 			t.Errorf("redis span %q %v", s.Name, s.Attributes)
+		}
+		for _, span := range spans {
+			if span.Name != "SET" {
+				t.Errorf("connection set-up span %q", span.Name)
+			}
 		}
 	})
 

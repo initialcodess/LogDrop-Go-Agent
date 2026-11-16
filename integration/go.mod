@@ -10,13 +10,13 @@ require (
 	github.com/initialcodess/LogDrop-Go-Agent v0.0.0-00010101000000-000000000000
 	github.com/initialcodess/LogDrop-Go-Agent/logdropamqp v0.0.0-00010101000000-000000000000
 	github.com/initialcodess/LogDrop-Go-Agent/logdropkafka v0.0.0-00010101000000-000000000000
+	github.com/initialcodess/LogDrop-Go-Agent/logdropredis v0.0.0-00010101000000-000000000000
 	github.com/jackc/pgx/v5 v5.13.0
 	github.com/labstack/echo-otel/v4 v4.0.0
 	github.com/labstack/echo-otel/v5 v5.0.0
 	github.com/labstack/echo/v4 v4.16.5
 	github.com/labstack/echo/v5 v5.4.6
 	github.com/rabbitmq/amqp091-go v1.16.0
-	github.com/redis/go-redis/extra/redisotel/v9 v9.23.0
 	github.com/redis/go-redis/v9 v9.23.0
 	github.com/segmentio/kafka-go v0.4.51
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.72.0
@@ -61,6 +61,7 @@ require (
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/quic-go/quic-go v0.63.0 // indirect
 	github.com/redis/go-redis/extra/rediscmd/v9 v9.23.0 // indirect
+	github.com/redis/go-redis/extra/redisotel/v9 v9.23.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.3.2 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
@@ -90,4 +91,5 @@ replace (
 	github.com/initialcodess/LogDrop-Go-Agent => ../
 	github.com/initialcodess/LogDrop-Go-Agent/logdropamqp => ../logdropamqp
 	github.com/initialcodess/LogDrop-Go-Agent/logdropkafka => ../logdropkafka
+	github.com/initialcodess/LogDrop-Go-Agent/logdropredis => ../logdropredis
 )
