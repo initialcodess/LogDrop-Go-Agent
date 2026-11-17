@@ -1,15 +1,19 @@
 LogDrop Client Library License
-Version 1.0, October 2026
+Version 1.1, November 2026
 
 Copyright (c) 2026 Initial Code (LogDrop). All rights reserved.
 
 This License applies to the LogDrop client libraries published by Initial Code
-("LogDrop", "we", "us"), including logdrop-api, logdrop-api-coroutines and
-logdrop-tracing-core, and to the LogDrop-authored parts of the LogDrop Java agent,
-in source, binary or any other form, together with their documentation
-(the "Software"). By downloading, installing, copying or using the Software you
-("Licensee", "you") agree to this License. If you use the Software on behalf of an
-organization, you accept this License for that organization.
+("LogDrop", "we", "us"), including the LogDrop agents and tracing libraries for
+Java, Node.js, Python, .NET and Go and their API packages (for example
+logdrop-api, logdrop-api-coroutines, logdrop-tracing-core, @log-drop/node-agent,
+@log-drop/api, logdrop-agent, LogDrop.Api and the Go modules under
+github.com/initialcodess/LogDrop-Go-Agent), and to the LogDrop-authored parts of
+the LogDrop agent images, in source, binary or any other form, together with
+their documentation (the "Software"). By downloading, installing, copying or
+using the Software you ("Licensee", "you") agree to this License. If you use the
+Software on behalf of an organization, you accept this License for that
+organization.
 
 1. Definitions
 
@@ -19,8 +23,10 @@ organization, you accept this License for that organization.
     Software is included or with which the Software runs, for example an
     application, service or container image.
 1.3 "Third-Party Components" means software included with the Software that is
-    owned by others and licensed under its own terms, including the
-    OpenTelemetry Java Instrumentation agent and its dependencies.
+    owned by others and licensed under its own terms, including OpenTelemetry
+    components (such as the OpenTelemetry Java Instrumentation agent, OpenTelemetry
+    .NET automatic instrumentation and the OpenTelemetry SDKs for Node.js, Python
+    and Go) and their dependencies.
 
 2. License grant
 
@@ -29,8 +35,10 @@ organization, you accept this License for that organization.
     with this License, to:
     (a) install, run and use the Software solely to collect telemetry from Customer
         Applications and to send it to the LogDrop Service; and
-    (b) include the Software, unmodified and in the binary form we publish, in your
-        Customer Applications, and distribute or deploy it only as an inseparable
+    (b) include the Software, unmodified and in the form we publish (in binary
+        form, or, where we publish it as source, such as the Go modules, compiled
+        from that unmodified source), in your Customer Applications, and
+        distribute or deploy it only as an inseparable
         part of those Customer Applications, to your own users or within your
         organization, including in container images and Kubernetes deployments.
 2.2 Your affiliates, contractors and service providers may exercise these rights
@@ -58,10 +66,13 @@ Except as expressly allowed in Section 2 or by mandatory applicable law, you mus
 4. Third-Party Components
 
 Third-Party Components are licensed to you under their own licenses, not this
-License. The OpenTelemetry Java Instrumentation agent and its dependencies are
-licensed under the Apache License, Version 2.0, and their license and NOTICE files
-are kept in the distribution. Nothing in this License restricts any right you have
-under the license of a Third-Party Component.
+License. The OpenTelemetry components included with the Software are licensed
+under the Apache License, Version 2.0; their dependencies keep their own licenses.
+Where we distribute them, their license and NOTICE files are kept in the
+distribution; components that a package manager downloads separately (for example
+Go modules, npm or PyPI packages) come with their own license files. Nothing in
+this License restricts any right you have under the license of a Third-Party
+Component.
 
 5. Ownership and feedback
 
