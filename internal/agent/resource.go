@@ -17,7 +17,7 @@ import (
 
 // The agent's name and version, sent as telemetry.distro.*.
 const (
-	Version      = "0.1.0-alpha1"
+	Version      = "0.1.0-alpha2"
 	Distribution = "logdrop-go-agent"
 )
 

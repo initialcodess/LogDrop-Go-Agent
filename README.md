@@ -31,4 +31,4 @@ proof/run.sh ../LogDrop-Devops <output dir>           # kind, the chart's inject
 ```
 
 The `go.work` workspace ties the modules together for development; a release is a git tag per module
-(`v0.1.0-alpha1`, `logdropredis/v0.1.0-alpha1`, ...). Nothing here is published or deployed by these commands.
+(`v0.1.0-alpha2`, `logdropredis/v0.1.0-alpha2`, ...). Nothing here is published or deployed by these commands.

@@ -21,7 +21,7 @@ anything leaves the service.
 ## 1. Add the package and start it
 
 ```bash
-go get github.com/initialcodess/LogDrop-Go-Agent@v0.1.0-alpha1
+go get github.com/initialcodess/LogDrop-Go-Agent@v0.1.0-alpha2
 ```
 
 ```go
@@ -77,7 +77,7 @@ image. `kubectl -n <namespace> get pod <pod> -o jsonpath='{.metadata.annotations
 `injected`, and the service log shows:
 
 ```
-[logdrop-agent] INFO LogDrop Go agent 0.1.0-alpha1 is tracing service "orders" (environment "production") to otel.logdrop.io.
+[logdrop-agent] INFO LogDrop Go agent 0.1.0-alpha2 is tracing service "orders" (environment "production") to otel.logdrop.io.
 ```
 
 ## 3b. Outside Kubernetes
